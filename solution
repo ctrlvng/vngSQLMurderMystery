@@ -1,0 +1,72 @@
+A crime has taken place and the detective needs your help. The detective gave you the crime scene report, but you somehow lost it. You vaguely remember that the crime was a ​murder​ that occurred sometime on ​Jan.15, 2018​ and that it took place in ​SQL City​. Start by retrieving the corresponding crime scene report from the police department’s database. 
+
+SELECT *
+FROM crime_scene_report
+WHERE date = 20180115 AND city = "SQL City" AND type = "murder";
+
+// Description indicates there were two witnesses. Find the two witnesses.
+
+SELECT *
+FROM person
+WHERE address_street_name = "Northwestern Dr"
+ORDER BY address_number desc
+LIMIT 1;
+
+SELECT *
+FROM person
+WHERE address_street_name = "Franklin Ave" AND name LIKE "Annabel%";
+
+// After finding the two witnesses, look up their interview transcripts.
+
+SELECT person.id, person.name, interview.transcript
+FROM person
+	JOIN interview ON person.id = interview.person_id
+WHERE id = 14887 OR id = 16371;
+
+// Look up the gym member using the witnesses' descriptions.
+
+SELECT *
+FROM get_fit_now_member
+	JOIN person ON get_fit_now_member.person_id = person.id
+	JOIN drivers_license ON person.license_id = drivers_license.id
+WHERE get_fit_now_member.id LIKE "48Z%" AND get_fit_now_member.membership_status = "gold" AND drivers_license.plate_number LIKE "%H42W%";
+
+// Look up their interview transcript to find who hired them.
+
+SELECT *
+FROM interview
+WHERE person_id = 67318;
+
+// Use the hitman's description to track down the person who hired him's driver's license (and identity).
+
+SELECT *
+FROM drivers_license
+WHERE height BETWEEN 65 AND 67 AND gender = "female" AND hair_color = "red" AND car_make = "Tesla" AND car_model = "Model S";
+
+// There are three poential culprits, but when we bring in income, as the hitman said the woman was rich, there are only two left.
+
+SELECT *
+FROM drivers_license
+	JOIN person ON person.license_id = drivers_license.id
+	JOIN income ON person.ssn = income.ssn
+WHERE height BETWEEN 65 AND 67 AND gender = "female" AND hair_color = "red" AND car_make = "Tesla" AND car_model = "Model S"
+ORDER BY income.annual_income DESC;
+
+// Now look up who has gone to the SQL Symphony Concert thrice in December 2017.
+
+SELECT person_id, event_name, COUNT(event_name)
+FROM facebook_event_checkin
+WHERE event_name = "SQL Symphony Concert" AND date LIKE "201712%" AND person_id = 99716 OR person_id = 78881
+GROUP BY person_id
+HAVING COUNT(event_name) = 3;
+
+// Only one result. Look up the name of the concertgoer.
+
+SELECT *
+FROM person
+WHERE id = 99716;
+
+// Finally, submit the solution.
+
+INSERT INTO solution VALUES (1, 'Miranda Priestly');
+   	 SELECT value FROM solution;
